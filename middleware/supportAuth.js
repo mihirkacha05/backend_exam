@@ -1,7 +1,7 @@
 const JWT = require('jsonwebtoken')
 const User = require('../models/users')
 
-const userAuth = async (req, res, next) => {
+const supportAuth = async (req, res, next) => {
   try {
     const user = await User.findById(req.userId).populate('role_id','role');
     if (user.role_id.role !== 'SUPPORT') {
@@ -13,5 +13,5 @@ const userAuth = async (req, res, next) => {
   }
 };
 
-module.exports = userAuth;
+module.exports = supportAuth;
 

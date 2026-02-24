@@ -1,13 +1,15 @@
 const express = require('express')
 const ticket = require('../models/tickets')
 const ticket_comments = require('../models/ticket_comments')
-const { default: mongoose } = require('mongoose')
+const { default: mongoose } = require('mongoose');
+const supportAuth = require('../middleware/supportAuth');
+const userAuth = require('../middleware/userAuth');
 
 const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const router = express.Router()
 
-router.post('/post', async (req, res) => {
+router.post('/post',userAuth, async (req, res) => {
     try {
         const { title, description , status ,priority,created_by,assigned_to } = req.body;
         const tickets = await ticket.create({
@@ -25,7 +27,7 @@ router.post('/post', async (req, res) => {
     }
 })
 
-router.get('/get', async (req, res) => {
+router.get('/get',supportAuth,userAuth, async (req, res) => {
     try {
         const tickets = await ticket.find().populate('created_by', 'name').populate('assigned_to','name');
         if (tickets.length === 0) {
@@ -50,7 +52,7 @@ router.delete('/delete/:id', async (req, res) => {
     }
 })
 
-router.post('/:id/comments', async (req, res) => {
+router.post('/:id/comments',supportAuth ,async (req, res) => {
 
     const ticket_id = req.params.id;
     try {
@@ -67,7 +69,7 @@ router.post('/:id/comments', async (req, res) => {
     }
 })
 
-router.get('/:id/comments', async (req, res) => {
+router.get('/:id/comments',supportAuth, async (req, res) => {
   try {
     const ticket_id  = req.params.id;
     console.log(ticket_id);
@@ -87,7 +89,7 @@ router.get('/:id/comments', async (req, res) => {
   }
 });
 
-router.patch('/:id/assign', async (req, res) => {
+router.patch('/:id/assign',supportAuth, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -104,7 +106,7 @@ router.patch('/:id/assign', async (req, res) => {
 });
 
 
-router.patch('/:id/status', async (req, res) => {
+router.patch('/:id/status',supportAuth, async (req, res) => {
   try {
     const { id } = req.params;
 
