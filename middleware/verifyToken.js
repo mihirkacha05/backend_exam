@@ -10,7 +10,8 @@ const verifyToken = (req,res,next)=>{
     const  token = headers.split(' ')[1];
 
     try{
-          JWT.verify(token,process.env.secret)
+          const decoded = JWT.verify(token,process.env.secret)
+          req.userId=decoded.id;
           next();
     }catch(err){
         res.json({msg:"token invalid ",err:err.message})
